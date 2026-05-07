@@ -1,0 +1,97 @@
+<div class="max-w-4xl mx-auto py-10 px-4">
+
+  <%# ── Header ── %>
+  <div class="mb-8">
+    <h1 class="text-2xl font-semibold text-gray-900">Conversations</h1>
+    <p class="text-sm text-gray-500 mt-1">Track who you're talking to and how it felt.</p>
+  </div>
+
+  <%# ── Add Conversation Form ── %>
+  <%= form_with model: @conversation, url: conversations_path, class: "bg-white border border-gray-200 rounded-xl p-6 mb-10 shadow-sm" do |f| %>
+    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">New Conversation</h2>
+
+    <%# Row 1: person + company + role %>
+    <div class="grid grid-cols-3 gap-4 mb-4">
+      <div>
+        <%= f.label :person, "Person", class: "block text-xs text-gray-500 mb-1" %>
+        <%= f.text_field :person, placeholder: "Name", class: "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300" %>
+      </div>
+      <div>
+        <%= f.label :company, "Company", class: "block text-xs text-gray-500 mb-1" %>
+        <%= f.text_field :company, placeholder: "Company", class: "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300" %>
+      </div>
+      <div>
+        <%= f.label :role, "Role", class: "block text-xs text-gray-500 mb-1" %>
+        <%= f.text_field :role, placeholder: "Role", class: "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300" %>
+      </div>
+    </div>
+
+    <%# Row 2: source + energy + engagement %>
+    <div class="grid grid-cols-3 gap-4 mb-4">
+      <div>
+        <%= f.label :source, "Source", class: "block text-xs text-gray-500 mb-1" %>
+        <%= f.text_field :source, placeholder: "LinkedIn, referral…", class: "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300" %>
+      </div>
+      <div>
+        <%= f.label :energy, "Energy", class: "block text-xs text-gray-500 mb-1" %>
+        <%= f.select :energy, [["Draining", "draining"], ["Medium", "medium"], ["Energizing", "energizing"]], { include_blank: "Select…" }, class: "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-300" %>
+      </div>
+      <div>
+        <%= f.label :engagement, "Engagement", class: "block text-xs text-gray-500 mb-1" %>
+        <%= f.select :engagement, [["Boring", "boring"], ["Neutral", "neutral"], ["Engaging", "engaging"]], { include_blank: "Select…" }, class: "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-300" %>
+      </div>
+    </div>
+
+    <%# Row 3: notes %>
+    <div class="mb-4">
+      <%= f.label :notes, "Notes", class: "block text-xs text-gray-500 mb-1" %>
+      <%= f.text_area :notes, placeholder: "What happened? What stood out?", rows: 3, class: "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 resize-none" %>
+    </div>
+
+    <%# Row 4: next_action + submit %>
+    <div class="flex gap-4 items-end">
+      <div class="flex-1">
+        <%= f.label :next_action, "Next Action", class: "block text-xs text-gray-500 mb-1" %>
+        <%= f.text_field :next_action, placeholder: "Follow up, send link…", class: "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300" %>
+      </div>
+      <%= f.submit "Add Conversation", class: "bg-gray-900 text-white text-sm font-medium px-5 py-2 rounded-lg hover:bg-gray-700 cursor-pointer transition-colors" %>
+    </div>
+  <% end %>
+
+  <%# ── Conversations List ── %>
+  <% if @conversations.any? %>
+    <div class="space-y-3">
+      <% @conversations.each do |c| %>
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="font-medium text-gray-900"><%= c.person %></p>
+              <p class="text-sm text-gray-500"><%= [c.role, c.company].compact.join(" @ ") %></p>
+            </div>
+            <div class="flex gap-2">
+              <% if c.energy.present? %>
+                <span class="<%= energy_badge_class(c.energy) %> text-xs font-medium px-2.5 py-1 rounded-full">
+                  <%= c.energy.capitalize %>
+                </span>
+              <% end %>
+              <% if c.engagement.present? %>
+                <span class="<%= engagement_badge_class(c.engagement) %> text-xs font-medium px-2.5 py-1 rounded-full">
+                  <%= c.engagement.capitalize %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+          <% if c.notes.present? %>
+            <p class="text-sm text-gray-600 mt-3"><%= c.notes %></p>
+          <% end %>
+          <% if c.next_action.present? %>
+            <p class="text-xs text-gray-400 mt-2">Next: <%= c.next_action %></p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-sm text-gray-400 text-center py-12">No conversations yet. Add your first one above.</p>
+  <% end %>
+
+</div>
